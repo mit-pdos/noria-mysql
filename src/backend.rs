@@ -1,5 +1,5 @@
 use noria::{
-    DataType, SyncControllerHandle, SyncTable, SyncView, TableOperation, ZookeeperAuthority,
+    consensus::Authority, DataType, SyncControllerHandle, SyncTable, SyncView, TableOperation,
 };
 
 use failure;
@@ -46,17 +46,18 @@ impl fmt::Debug for PreparedStatement {
     }
 }
 
-struct NoriaBackendInner<E> {
-    noria: SyncControllerHandle<ZookeeperAuthority, E>,
+struct NoriaBackendInner<E, A: Authority + 'static> {
+    noria: SyncControllerHandle<A, E>,
     inputs: BTreeMap<String, SyncTable>,
     outputs: BTreeMap<String, SyncView>,
 }
 
-impl<E> NoriaBackendInner<E>
+impl<E, A> NoriaBackendInner<E, A>
 where
     E: tokio::executor::Executor,
+    A: Authority + 'static,
 {
-    fn new(mut ch: SyncControllerHandle<ZookeeperAuthority, E>) -> Self {
+    fn new(mut ch: SyncControllerHandle<A, E>) -> Self {
         NoriaBackendInner {
             inputs: ch
                 .inputs()
@@ -109,8 +110,8 @@ where
     }
 }
 
-pub struct NoriaBackend<E> {
-    inner: NoriaBackendInner<E>,
+pub struct NoriaBackend<E, A: Authority + 'static> {
+    inner: NoriaBackendInner<E, A>,
     log: slog::Logger,
     ops: Arc<atomic::AtomicUsize>,
     trace_every: Option<usize>,
@@ -135,12 +136,13 @@ pub struct NoriaBackend<E> {
     static_responses: bool,
 }
 
-impl<E> NoriaBackend<E>
+impl<E, A> NoriaBackend<E, A>
 where
     E: tokio::executor::Executor,
+    A: Authority + 'static,
 {
     pub fn new(
-        ch: SyncControllerHandle<ZookeeperAuthority, E>,
+        ch: SyncControllerHandle<A, E>,
         auto_increments: Arc<RwLock<HashMap<String, atomic::AtomicUsize>>>,
         query_cache: Arc<RwLock<HashMap<SelectStatement, String>>>,
         (ops, trace_every): (Arc<atomic::AtomicUsize>, Option<usize>),
@@ -910,9 +912,10 @@ where
     }
 }
 
-impl<W: io::Write, E> MysqlShim<W> for &mut NoriaBackend<E>
+impl<W: io::Write, E, A> MysqlShim<W> for &mut NoriaBackend<E, A>
 where
     E: tokio::executor::Executor,
+    A: 'static + Authority,
 {
     type Error = io::Error;
 

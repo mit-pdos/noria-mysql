@@ -21,17 +21,17 @@ pub(crate) fn convert_column(cs: &ColumnSpecification) -> msql_srv::Column {
             SqlType::UnsignedInt(_) => {
                 flags |= msql_srv::ColumnFlags::UNSIGNED_FLAG;
                 msql_srv::ColumnType::MYSQL_TYPE_LONG
-            },
+            }
             SqlType::Bigint(_) => msql_srv::ColumnType::MYSQL_TYPE_LONGLONG,
             SqlType::UnsignedBigint(_) => {
                 flags |= msql_srv::ColumnFlags::UNSIGNED_FLAG;
                 msql_srv::ColumnType::MYSQL_TYPE_LONGLONG
-            },
+            }
             SqlType::Tinyint(_) => msql_srv::ColumnType::MYSQL_TYPE_TINY,
             SqlType::UnsignedTinyint(_) => {
                 flags |= msql_srv::ColumnFlags::UNSIGNED_FLAG;
                 msql_srv::ColumnType::MYSQL_TYPE_TINY
-            },
+            }
             SqlType::Bool => msql_srv::ColumnType::MYSQL_TYPE_BIT,
             SqlType::DateTime(_) => msql_srv::ColumnType::MYSQL_TYPE_DATETIME,
             SqlType::Float => msql_srv::ColumnType::MYSQL_TYPE_DOUBLE,
