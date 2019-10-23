@@ -114,7 +114,17 @@ fn setup(deployment: &Deployment) -> mysql::Opts {
 
         let stats = (Arc::new(AtomicUsize::new(0)), None);
         let primed = Arc::new(AtomicBool::new(false));
-        let mut b = NoriaBackend::new(ch, auto_increments, query_cache, stats, primed, false, true, true, logger);
+        let mut b = NoriaBackend::new(
+            ch,
+            auto_increments,
+            query_cache,
+            stats,
+            primed,
+            false,
+            true,
+            true,
+            logger,
+        );
 
         MysqlIntermediary::run_on_tcp(&mut b, s).unwrap();
         rt.shutdown_on_idle().wait().unwrap();
