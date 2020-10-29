@@ -776,13 +776,13 @@ impl NoriaBackend {
         }
 
         let ops = &self.ops;
-        if self
-            .trace_every
-            .map(|te| ops.fetch_add(1, atomic::Ordering::AcqRel) % te == 0)
-            .unwrap_or(false)
-        {
-            noria::trace_my_next_op();
-        }
+        // if self
+        //     .trace_every
+        //     .map(|te| ops.fetch_add(1, atomic::Ordering::AcqRel) % te == 0)
+        //     .unwrap_or(false)
+        // {
+        //     noria::trace_my_next_op();
+        // }
 
         let result = if let Some(ref update_fields) = q.on_duplicate {
             trace!("insert::complex");
@@ -900,13 +900,13 @@ impl NoriaBackend {
         let keys = if is_bogo { bogo } else { keys };
 
         let ops = &self.ops;
-        if self
-            .trace_every
-            .map(|te| ops.fetch_add(1, atomic::Ordering::AcqRel) % te == 0)
-            .unwrap_or(false)
-        {
-            noria::trace_my_next_op();
-        }
+        // if self
+        //     .trace_every
+        //     .map(|te| ops.fetch_add(1, atomic::Ordering::AcqRel) % te == 0)
+        //     .unwrap_or(false)
+        // {
+        //     noria::trace_my_next_op();
+        // }
 
         // if first lookup fails, there's no reason to try the others
         match block_on_buffer(getter.multi_lookup(keys, true)) {
@@ -968,13 +968,13 @@ impl NoriaBackend {
         };
 
         let ops = &self.ops;
-        if self
-            .trace_every
-            .map(|te| ops.fetch_add(1, atomic::Ordering::AcqRel) % te == 0)
-            .unwrap_or(false)
-        {
-            noria::trace_my_next_op();
-        }
+        // if self
+        //     .trace_every
+        //     .map(|te| ops.fetch_add(1, atomic::Ordering::AcqRel) % te == 0)
+        //     .unwrap_or(false)
+        // {
+        //     noria::trace_my_next_op();
+        // }
 
         trace!("update::update");
         match block_on_buffer(mutator.update(key, updates)) {
